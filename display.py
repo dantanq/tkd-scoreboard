@@ -5,8 +5,11 @@ Author: Danica Tanquilut
 Last Modified: October 2018
 """
 
-import serial
-import serial.tools.list_ports
+try:
+	import serial
+	import serial.tools.list_ports
+except:
+	print("Cannot Import Serial")
 try:
     # for Python3
 	import tkinter as tk
@@ -38,7 +41,12 @@ class Control(Frame):
 		self.timer = None
 		self.isSuddenDeath = False
 		self.callNextRound = True
-		super().__init__()
+		try:
+			# for Python3
+			super().__init__()
+		except:
+			# for Python2
+			Frame.__init__(self)
 
 		# set title and default style
 		self.master.title("TKD Scoring System")
@@ -61,10 +69,14 @@ class Control(Frame):
 		self.roundsEntry = Entry(self.roundsFrame, width=3, font=(None, 20))
 		# serial entry frame
 		self.serialFrame = Frame(self)
-		self.arduino_ports = ["None"] + [
-		    p.device
-		    for p in serial.tools.list_ports.comports()
-		]
+		try:
+			self.arduino_ports = ["None"] + [
+			    p.device
+			    for p in serial.tools.list_ports.comports()
+			]
+		except:
+			# if serial is not installed
+			self.arduino_ports = ["None"]
 		self.serialEntry = StringVar()
 		self.serialEntry.set("None")
 		self.serialLabel = Label(self.serialFrame, text="Serial Input:", font=(None, 20))
@@ -391,7 +403,12 @@ class Timer(Frame):
 
 	def __init__(self, inputTime):
 		# time is represented as an array of [minutes, seconds]
-		super().__init__()
+		try:
+			# Python3
+			super().__init__()
+		except:
+			# Python2
+			Frame.__init__(self)
 		self.timeLeft = inputTime
 		self.totalTime = [inputTime[0], inputTime[1]]
 		self.running = False
@@ -445,7 +462,12 @@ class Timer(Frame):
 class Display(Toplevel):
 
 	def __init__(self, timer):
-		super().__init__()
+		try:
+			# Python3
+			super().__init__()
+		except:
+			# Python2
+			Toplevel.__init__(self)
 		# initialize score string variables
 		self.timer = timer
 		self.redScore = StringVar()
@@ -532,7 +554,12 @@ class Display(Toplevel):
 class miniDisplay(Display):
 
 	def __init__(self, timer):
-		super().__init__(timer)
+		try:
+			# Python3
+			super().__init__(timer)
+		except:
+			# Python2
+			Display.__init__(self, timer)
 		self.timerLabel['font'] = (None, 50)
 		self.redScoreLabel['font'] = (None, 50)
 		self.blueScoreLabel['font'] = (None, 50)
