@@ -45,3 +45,5 @@ Additionally, the "Reset Match" button can be used to start a new match with the
 A miniature display mirroring the fullscreen display (to be used by the side-by-side with the controller) is also opened when a match is created. Similarly to the fullscreen display, it shows the points and kyonggo for each fighter, a timer, and the current round.
 
 ![miniDisplay](/screenshots/minidisplay.png)
+
+To exit, simply close the controller or create match window.
