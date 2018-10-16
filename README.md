@@ -24,7 +24,7 @@ The application uses [pySerial](https://github.com/pyserial/pyserial) to read th
 python -m pip install pyserial
 ```
 ## Usage
-To open the application using Python 3, run:
+To open the application, run:
 ```
 python display.py
 ```
