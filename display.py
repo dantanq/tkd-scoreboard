@@ -9,14 +9,14 @@ import serial
 import serial.tools.list_ports
 try:
     # for Python3
-    import tkinter as tk
-    from tkinter import *
+	import tkinter as tk
+	from tkinter import *
 	from tkinter.ttk import Frame, Style, Button, Label, Entry, Checkbutton, OptionMenu
 except ImportError:
-    # for Python2
-    import Tkinter as tk
-    from Tkinter import *
-    from Tkinter.ttk import Frame, Style, Button, Label, Entry, Checkbutton, OptionMenu
+	# for Python2
+	import Tkinter as tk
+	from Tkinter import *
+	from ttk import Frame, Style, Button, Label, Entry, Checkbutton, OptionMenu
 import time
 
 class Control(Frame):
