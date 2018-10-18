@@ -491,7 +491,7 @@ class Display(Toplevel):
 		self.currentRound.set("R1")
 		self.roundLabel.pack(side=RIGHT, fill=Y, anchor=S)
 		self.timerLabel = tk.Label(self.timerFrame, textvariable=self.timeString,
-			font=(None, 170), fg="WHITE", bg="BLACK")
+			font=(None, 160), fg="WHITE", bg="BLACK")
 		self.timeString.set(self.timer.getTimeString())
 		self.timerLabel.pack(side=BOTTOM, fill=X, expand=True)
 
@@ -513,11 +513,11 @@ class Display(Toplevel):
 
 		# initialize and pack score labels using string variables
 		self.redScoreLabel = tk.Label(self.redFrame, textvariable=self.redScore, 
-			font=(None, 750), bg="RED")
+			font=(None, 740), bg="RED")
 		self.redScoreLabel.pack(side=TOP, fill=X, expand=True)
 		self.redScore.set("0")
 		self.blueScoreLabel = tk.Label(self.blueFrame, textvariable=self.blueScore, 
-			font=(None, 750), bg="BLUE")
+			font=(None, 740), bg="BLUE")
 		self.blueScoreLabel.pack(side=TOP, fill=X, expand=True)
 		self.blueScore.set("0")
 
