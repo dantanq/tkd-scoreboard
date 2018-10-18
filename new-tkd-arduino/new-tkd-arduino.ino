@@ -45,28 +45,21 @@ void setup() {
   Serial.begin(9600);
 
   // initialize pins
-  pinMode(redScorePin1, INPUT);
-  pinMode(redScorePin2, INPUT);
-  pinMode(redScorePin3, INPUT);
-  pinMode(blueScorePin1, INPUT);
-  pinMode(blueScorePin2, INPUT);
-  pinMode(blueScorePin3, INPUT);
-
-  digitalWrite(redScorePin1, HIGH);
-  digitalWrite(redScorePin2, HIGH);
-  digitalWrite(redScorePin3, HIGH);
-  digitalWrite(blueScorePin1, HIGH);
-  digitalWrite(blueScorePin2, HIGH);
-  digitalWrite(blueScorePin3, HIGH);
+  pinMode(redScorePin1, INPUT_PULLUP);
+  pinMode(redScorePin2, INPUT_PULLUP);
+  pinMode(redScorePin3, INPUT_PULLUP);
+  pinMode(blueScorePin1, INPUT_PULLUP);
+  pinMode(blueScorePin2, INPUT_PULLUP);
+  pinMode(blueScorePin3, INPUT_PULLUP);
 
   // initialize fighter pin and button states
   // red fighter
   red->scorePin1 = redScorePin1;
   red->scorePin2 = redScorePin2;
   red->scorePin3 = redScorePin3;
-  red->scoreButton1LastState = LOW;
-  red->scoreButton2LastState = LOW;
-  red->scoreButton3LastState = LOW;
+  red->scoreButton1LastState = HIGH;
+  red->scoreButton2LastState = HIGH;
+  red->scoreButton3LastState = HIGH;
   red->lastDebounceTime1 = 0;
   red->lastDebounceTime2 = 0;
   red->lastDebounceTime3 = 0;
@@ -75,9 +68,9 @@ void setup() {
   blue->scorePin1 = blueScorePin1;
   blue->scorePin2 = blueScorePin2;
   blue->scorePin3 = blueScorePin3;
-  blue->scoreButton1LastState = LOW;
-  blue->scoreButton2LastState = LOW;
-  blue->scoreButton3LastState = LOW;
+  blue->scoreButton1LastState = HIGH;
+  blue->scoreButton2LastState = HIGH;
+  blue->scoreButton3LastState = HIGH;
   blue->lastDebounceTime1 = 0;
   blue->lastDebounceTime2 = 0;
   blue->lastDebounceTime3 = 0;
