@@ -4,13 +4,12 @@
 // 
 
 // define pin numbers
-// TODO: Assign these to actual pins
-const int redScorePin1 = 0;
-const int redScorePin2 = 0;
-const int redScorePin3 = 0;
-const int blueScorePin1 = 0;
-const int blueScorePin2 = 0;
-const int blueScorePin3 = 0;
+const int redScorePin1 = 2;
+const int redScorePin2 = 4;
+const int redScorePin3 = 6;
+const int blueScorePin1 = 3;
+const int blueScorePin2 = 5;
+const int blueScorePin3 = 7;
 
 // define debounce and button delays
 const int debounceDelay = 50; //  50 ms
@@ -35,6 +34,12 @@ typedef struct Fighter {
   unsigned long lastDebounceTime1;
   unsigned long lastDebounceTime2;
   unsigned long lastDebounceTime3;
+  unsigned long lastPress1;
+  unsigned long lastPress2;
+  unsigned long lastPress3;
+  bool push1;
+  bool push2;
+  bool push3;
 } Fighter;
 
 // initialize fighters
@@ -64,6 +69,9 @@ void setup() {
   red->lastDebounceTime2 = 0;
   red->lastDebounceTime3 = 0;
   red->serialOutput = 0;
+  red->push1 = false;
+  red->push2 = false;
+  red->push3 = false;
   // blue fighter
   blue->scorePin1 = blueScorePin1;
   blue->scorePin2 = blueScorePin2;
@@ -75,6 +83,9 @@ void setup() {
   blue->lastDebounceTime2 = 0;
   blue->lastDebounceTime3 = 0;
   blue->serialOutput = 1;
+  blue->push1 = false;
+  blue->push2 = false;
+  blue->push3 = false;
 }
 
 void updateScore(Fighter *fighter) {
@@ -105,12 +116,20 @@ void updateScore(Fighter *fighter) {
     if (scoreState1 != fighter->scoreButton1State) {
       fighter->scoreButton1State = scoreState1;
     }
+    if (fighter->scoreButton1State == 0) {
+      fighter->lastPress1 = fighter->lastDebounceTime1;
+      fighter->push1 = true;
+    }
   }
   
   if ((now - fighter->lastDebounceTime2) > debounceDelay) {
     // check if button state has changed
     if (scoreState2 != fighter->scoreButton2State) {
       fighter->scoreButton2State = scoreState2;
+    }
+    if (fighter->scoreButton2State == 0) {
+      fighter->lastPress2 = fighter->lastDebounceTime2;
+      fighter->push2 = true;
     }
   }
   
@@ -119,15 +138,22 @@ void updateScore(Fighter *fighter) {
     if (scoreState3 != fighter->scoreButton3State) {
       fighter->scoreButton3State = scoreState3;
     }
+    if (fighter->scoreButton3State == 0) {
+      fighter->lastPress3 = fighter->lastDebounceTime3;
+      fighter->push3 = true;
+    }
   }
 
   // logical combinations of inputs and whether debounce times are within 1 second
-  bool oneTwo = (abs(fighter->lastDebounceTime1 - fighter->lastDebounceTime2) < buttonDelay);
-  bool oneThree = (abs(fighter->lastDebounceTime1 - fighter->lastDebounceTime3) < buttonDelay);
-  bool twoThree = (abs(fighter->lastDebounceTime3 - fighter->lastDebounceTime2) < buttonDelay);
+  bool oneTwo = (abs(fighter->lastPress1 - fighter->lastPress2) < buttonDelay) & fighter->push1 & fighter->push2;
+  bool oneThree = (abs(fighter->lastPress1 - fighter->lastPress3) < buttonDelay) & fighter->push1 & fighter->push3;
+  bool twoThree = (abs(fighter->lastPress3 - fighter->lastPress2) < buttonDelay) & fighter->push2 & fighter->push3;
   // if any are true, Serial print output of fighter (0 for red, 1 for blue)
-  if ((oneTwo || oneThree) || twoThree) {
+  if ((oneTwo || oneThree || twoThree)) {
     Serial.println(fighter->serialOutput);
+    fighter->push1 = false;
+    fighter->push2 = false;
+    fighter->push3 = false;
   }
 
   // save loop's readings as last state
