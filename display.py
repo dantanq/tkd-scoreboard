@@ -268,11 +268,11 @@ class Control(Frame):
 			self.currentRound = 1
 			if self.isSuddenDeath:
 				self.isSuddenDeath = False
-				self.newMatch.pack_forget()
-				self.resetMatch.pack_forget()
-				self.timerStartStop.pack(side=TOP, pady=5)
-				self.newMatch.pack(side=LEFT, padx=5)
-				self.resetMatch.pack(side=RIGHT, padx=5)
+			self.newMatch.pack_forget()
+			self.resetMatch.pack_forget()
+			self.timerStartStop.pack(side=TOP, pady=5)
+			self.newMatch.pack(side=LEFT, padx=5)
+			self.resetMatch.pack(side=RIGHT, padx=5)
 			self.startStop.set("Start Round 1")
 			self.display.reset(self.timer.getTimeString())
 			self.miniDisplay.reset(self.timer.getTimeString())
@@ -282,7 +282,8 @@ class Control(Frame):
 			self.timer.stop()
 			if self.callNextRound:
 				self.nextRound()
-			self.display.updateTimer(self.timer.getTimeString())
+			if self.currentRound < self.numRounds or self.redPoints == self.bluePoints:
+				self.display.updateTimer(self.timer.getTimeString())
 			self.miniDisplay.updateTimer(self.timer.getTimeString())
 		elif self.currentRound > self.numRounds:
 			self.suddenDeath()
@@ -296,8 +297,19 @@ class Control(Frame):
 		self.currentRound += 1
 		if self.currentRound <= self.numRounds:
 			self.startStop.set("Reset Timer")
-		else:
+		elif self.redPoints == self.bluePoints:
 			self.startStop.set("Sudden Death")
+		else:
+			self.declareWinner()
+			self.timerStartStop.pack_forget()
+
+	def declareWinner(self):
+		if self.redPoints > self.bluePoints:
+			winner = "RED"
+		else:
+			winner = "BLUE"
+		self.display.updateTimer(winner + " WINS")
+		self.display.updateCurrentRound("")
 
 	def suddenDeath(self):
 		self.redPoints = 0
@@ -324,7 +336,9 @@ class Control(Frame):
 					self.incrementPoints(fighter)
 				except:
 					print("Invalid Serial Input")
-			self.after(500, self.readSerialInput)
+				self.after(250, self.readSerialInput)
+			else:
+				self.after(50, self.readSerialInput)
 
 	def incrementPoints(self, fighter):
 		if fighter == self.RED:
@@ -335,6 +349,8 @@ class Control(Frame):
 			self.bluePoints += 1
 			self.display.updateBluePoints(self.bluePoints)
 			self.miniDisplay.updateBluePoints(self.bluePoints)
+		if self.isSuddenDeath:
+			self.declareWinner()
 
 	def deductPoints(self, fighter):
 		if fighter == self.RED and self.redPoints > 0:
@@ -347,23 +363,22 @@ class Control(Frame):
 			self.miniDisplay.updateBluePoints(self.bluePoints)
 
 	def callKyonggo(self, fighter):
-		# Noah said these point deductions are correct
 		if fighter == self.RED:
 			self.redKyonggo += 1
 			self.display.updateRedKyonggo("Kyonggo: " + str(self.redKyonggo))
 			self.miniDisplay.updateRedKyonggo("Kyonggo: " + str(self.redKyonggo))
-			if self.redKyonggo % 2 == 0 and self.redPoints > 0:
-				self.redPoints -= 1
-				self.display.updateRedPoints(self.redPoints)
-				self.miniDisplay.updateRedPoints(self.redPoints)
+			if self.redKyonggo % 2 == 0:
+				self.bluePoints += 1
+				self.display.updateBluePoints(self.bluePoints)
+				self.miniDisplay.updateBluePoints(self.bluePoints)
 		elif fighter == self.BLUE:
 			self.blueKyonggo += 1
 			self.display.updateBlueKyonggo("Kyonggo: " + str(self.blueKyonggo))
 			self.miniDisplay.updateBlueKyonggo("Kyonggo: " + str(self.blueKyonggo))
-			if self.blueKyonggo % 2 == 0 and self.bluePoints > 0:
-				self.bluePoints -= 1
-				self.display.updateBluePoints(self.bluePoints)
-				self.miniDisplay.updateBluePoints(self.bluePoints)
+			if self.blueKyonggo % 2 == 0:
+				self.redPoints -= 1
+				self.display.updateRedPoints(self.redPoints)
+				self.miniDisplay.updateRedPoints(self.redPoints)
 
 	def deductKyonggo(self, fighter):
 		if fighter == self.RED and self.redKyonggo > 0:
@@ -514,11 +529,11 @@ class Display(Toplevel):
 		# initialize and pack score labels using string variables
 		self.redScoreLabel = tk.Label(self.redFrame, textvariable=self.redScore, 
 			font=(None, 740), bg="RED")
-		self.redScoreLabel.pack(side=TOP, fill=X, expand=True)
+		self.redScoreLabel.pack(side=TOP, fill=X)
 		self.redScore.set("0")
 		self.blueScoreLabel = tk.Label(self.blueFrame, textvariable=self.blueScore, 
 			font=(None, 740), bg="BLUE")
-		self.blueScoreLabel.pack(side=TOP, fill=X, expand=True)
+		self.blueScoreLabel.pack(side=TOP, fill=X)
 		self.blueScore.set("0")
 
 	def updateRedPoints(self, points):
@@ -573,6 +588,12 @@ class miniDisplay(Display):
 		else:
 			self.timerLabel['font'] = (None, 50)
 		self.timeString.set(time)
+
+	def updateRedPoints(self, points):
+		self.redScore.set(str(points))
+
+	def updateBluePoints(self, points):
+		self.blueScore.set(str(points))
 
 def main():
 	root = Tk()
