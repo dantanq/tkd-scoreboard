@@ -145,15 +145,19 @@ void updateScore(Fighter *fighter) {
   }
 
   // logical combinations of inputs and whether debounce times are within 1 second
-  bool oneTwo = (abs(fighter->lastPress1 - fighter->lastPress2) < buttonDelay) & fighter->push1 & fighter->push2;
-  bool oneThree = (abs(fighter->lastPress1 - fighter->lastPress3) < buttonDelay) & fighter->push1 & fighter->push3;
-  bool twoThree = (abs(fighter->lastPress3 - fighter->lastPress2) < buttonDelay) & fighter->push2 & fighter->push3;
+  long differenceOne = fighter->lastPress1 - fighter->lastPress2;
+  long differenceTwo = fighter->lastPress1 - fighter->lastPress3;
+  long differenceThree = fighter->lastPress3 - fighter->lastPress2;
+  bool oneTwo = (abs(differenceOne) < buttonDelay) & (fighter->push1 & fighter->push2);
+  bool oneThree = (abs(differenceTwo) < buttonDelay) & (fighter->push1 & fighter->push3);
+  bool twoThree = (abs(differenceThree) < buttonDelay) & (fighter->push2 & fighter->push3);
   // if any are true, Serial print output of fighter (0 for red, 1 for blue)
   if ((oneTwo || oneThree || twoThree)) {
     Serial.println(fighter->serialOutput);
     fighter->push1 = false;
     fighter->push2 = false;
     fighter->push3 = false;
+    delay(250);
   }
 
   // save loop's readings as last state
